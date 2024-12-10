@@ -9,30 +9,45 @@ import { validateRequest } from "../middlewares/validate-request";
 
 const router = Router();
 
-router.get("/", async (req: Request, res: Response) => {
-  const userId = req.query.userId?.toString();
-  if (!userId) {
-    res.status(400).send({ data: null, message: "userId is required" });
-    return;
+router.get(
+  "/",
+  validateRequest({
+    query: z.object({
+      userId: z.string({ message: "userId is Required" }).min(1),
+    }),
+  }),
+  async (req: Request, res: Response) => {
+    const userId = String(req.query.userId);
+    const posts = await getPosts(userId);
+    res.send({ data: posts, message: "Posts retrieved successfully" });
   }
-  const posts = await getPosts(userId);
-  res.send({ data: posts, message: "Posts retrieved successfully" });
-});
+);
 
-router.delete("/:id", async (req: Request, res: Response) => {
-  const id = req.params.id;
-  if (!id) {
-    res.status(400).send({ data: null, message: "id is required" });
-    return;
+router.delete(
+  "/:id",
+  validateRequest({
+    params: z.object({
+      id: z
+        .string({ message: "id is required" })
+        .trim()
+        .min(1, { message: "id is required" }),
+    }),
+  }),
+  async (req: Request, res: Response) => {
+    const id = req.params.id;
+    if (!id) {
+      res.status(400).send({ data: null, message: "id is required" });
+      return;
+    }
+    const post = await getPostById(id);
+    if (!post) {
+      res.status(404).send({ data: null, message: "Post not found" });
+      return;
+    }
+    await deletePost(id);
+    res.send({ message: "Post deleted successfully", data: null });
   }
-  const post = await getPostById(id);
-  if (!post) {
-    res.status(404).send({ data: null, message: "Post not found" });
-    return;
-  }
-  await deletePost(id);
-  res.send({ message: "Post deleted successfully", data: null });
-});
+);
 
 router.post(
   "/",
