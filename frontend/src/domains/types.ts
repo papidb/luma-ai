@@ -3,6 +3,10 @@ export interface ApiResponse<T> {
   data: T;
 }
 
+export interface ApiError {
+  message: string;
+}
+
 export interface ApiPaginatedResponse<T> extends ApiResponse<T> {
   count: number;
   page_count: number;
