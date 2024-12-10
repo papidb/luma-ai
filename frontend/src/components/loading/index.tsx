@@ -1,3 +1,4 @@
+import "./loading.css";
 export function Loading() {
   return (
     <div className="lds-ellipsis">
