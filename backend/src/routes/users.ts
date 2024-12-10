@@ -1,9 +1,9 @@
-import { Router, Request, Response } from "express";
+import { Request, Response, Router } from "express";
 
+import { StatusCodes } from "http-status-codes";
+import { z } from "zod";
 import { getUsers, getUsersCount } from "../db/users/users";
 import { validateRequest } from "../middlewares/validate-request";
-import { z } from "zod";
-import { StatusCodes } from "http-status-codes";
 
 const router = Router();
 
@@ -18,10 +18,18 @@ router.get(
   async (req: Request, res: Response) => {
     const pageNumber = Number(req.query.pageNumber) || 0;
     const pageSize = Number(req.query.pageSize) || 4;
-    const users = await getUsers(pageNumber, pageSize);
-    res
-      .status(StatusCodes.OK)
-      .send({ data: users, message: "Users retrieved successfully" });
+    const [users, count] = await Promise.all([
+      getUsers(pageNumber, pageSize),
+      getUsersCount(),
+    ]);
+
+    res.status(StatusCodes.OK).send({
+      data: users,
+      count,
+      page_count: Math.ceil(count / pageSize),
+      page: pageNumber,
+      message: "Users retrieved successfully",
+    });
   }
 );
 
