@@ -1,3 +1,3 @@
 export const POSTS_QUERY_KEYS = {
-  posts: ["posts"],
+  posts: (userId: string) => ["posts", userId],
 } as const;

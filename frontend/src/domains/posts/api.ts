@@ -4,9 +4,9 @@ import { Post } from "./types";
 
 const postsApi = api.url("/posts");
 
-export const getPosts = async () => {
-  return postsApi.url("/").get().json<ApiResponse<Post[]>>();
-};
+export const getPosts = async (userId: string) =>
+  (await postsApi.url(`?userId=${userId}`).get().json<ApiResponse<Post[]>>())
+    .data;
 
 export const createPost = (
   params: Pick<Post, "title" | "body"> & { user_id: string }

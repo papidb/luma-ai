@@ -34,6 +34,7 @@ const columns = [
 
 function RouteComponent() {
   const dataData = Route.useLoaderData();
+  const navigate = Route.useNavigate();
 
   const table = useReactTable({
     data: dataData.data,
@@ -46,6 +47,17 @@ function RouteComponent() {
       },
     },
   });
+
+  const handleRowClick = (user: User) => {
+    navigate({
+      to: `/users/$id`,
+      params: { id: user.id },
+      search: {
+        name: user.name,
+        email: user.email,
+      },
+    });
+  };
 
   return (
     <div className="w-full max-w-6xl mx-auto p-6">
@@ -73,7 +85,11 @@ function RouteComponent() {
           </thead>
           <tbody>
             {table.getRowModel().rows.map((row) => (
-              <tr key={row.id} className="border-t hover:bg-gray-50">
+              <tr
+                key={row.id}
+                className="border-t hover:bg-gray-50 cursor-pointer"
+                onClick={() => handleRowClick(row.original)}
+              >
                 {row.getVisibleCells().map((cell) => (
                   <td key={cell.id} className="p-4">
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
