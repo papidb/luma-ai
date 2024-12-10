@@ -1,6 +1,6 @@
 export const selectUsersTemplate = `
 SELECT 
-    users.id AS user_id,
+    users.id,
     users.name,
     users.username,
     users.email,
