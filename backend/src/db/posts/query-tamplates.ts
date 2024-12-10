@@ -11,3 +11,9 @@ SELECT *
 FROM posts
 WHERE id = ?;
 `;
+
+
+export const insertPostTemplate = `
+INSERT INTO posts (title, body, user_id, id, created_at)
+VALUES (?, ?, ?, ?, ?);
+`;

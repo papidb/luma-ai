@@ -2,6 +2,7 @@ import { db } from "../connection";
 
 import {
   selectCountOfUsersTemplate,
+  selectUserByIdTemplate,
   selectUsersTemplate,
 } from "./query-templates";
 import { User } from "./types";
@@ -16,3 +17,7 @@ export const getUsers = (
   pageSize: number
 ): Promise<User[]> =>
   db.all<User>(selectUsersTemplate, [pageNumber * pageSize, pageSize]);
+
+
+  export const getUserById = (id: string): Promise<User> =>
+  db.get<User>(selectUserByIdTemplate, [id]);
