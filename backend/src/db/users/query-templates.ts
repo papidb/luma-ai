@@ -1,15 +1,26 @@
 export const selectUsersTemplate = `
-SELECT *
-FROM users
-ORDER BY name
-LIMIT ?, ?
+SELECT 
+    users.id AS user_id,
+    users.name,
+    users.username,
+    users.email,
+    users.phone,
+    CONCAT(addresses.street, ', ', addresses.state, ', ', addresses.city, ', ', addresses.zipcode) AS full_address
+FROM 
+    users
+LEFT JOIN 
+    addresses
+ON 
+    users.id = addresses.user_id
+ORDER BY 
+    name
+  LIMIT ? OFFSET ?;
 `;
 
 export const selectCountOfUsersTemplate = `
 SELECT COUNT(*) as count
 FROM users
 `;
-
 
 export const selectUserByIdTemplate = `
 SELECT *

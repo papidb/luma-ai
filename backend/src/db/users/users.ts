@@ -16,8 +16,7 @@ export const getUsers = (
   pageNumber: number,
   pageSize: number
 ): Promise<User[]> =>
-  db.all<User>(selectUsersTemplate, [pageNumber * pageSize, pageSize]);
+  db.all<User>(selectUsersTemplate, [pageSize, (pageNumber - 1) * pageSize]);
 
-
-  export const getUserById = (id: string): Promise<User> =>
+export const getUserById = (id: string): Promise<User> =>
   db.get<User>(selectUserByIdTemplate, [id]);
