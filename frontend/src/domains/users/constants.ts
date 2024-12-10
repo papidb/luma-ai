@@ -1,4 +1,4 @@
 export const USER_QUERY_KEYS = {
-    users: ["users"],
-  } as const;
-  
+  users: (page: number) => ["users", page],
+  paginated_user: ["paginated_user"],
+} as const;
