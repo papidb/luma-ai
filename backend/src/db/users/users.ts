@@ -1,4 +1,4 @@
-import { connection } from "../connection";
+import { db } from "../connection";
 
 import {
   selectCountOfUsersTemplate,
@@ -7,31 +7,12 @@ import {
 import { User } from "./types";
 
 export const getUsersCount = (): Promise<number> =>
-  new Promise((resolve, reject) => {
-    connection.get<{ count: number }>(
-      selectCountOfUsersTemplate,
-      (error, results) => {
-        if (error) {
-          reject(error);
-        }
-        resolve(results.count);
-      }
-    );
-  });
+  db
+    .get<{ count: number }>(selectCountOfUsersTemplate)
+    .then((result) => result.count);
 
 export const getUsers = (
   pageNumber: number,
   pageSize: number
 ): Promise<User[]> =>
-  new Promise((resolve, reject) => {
-    connection.all<User>(
-      selectUsersTemplate,
-      [pageNumber * pageSize, pageSize],
-      (error, results) => {
-        if (error) {
-          reject(error);
-        }
-        resolve(results);
-      }
-    );
-  });
+  db.all<User>(selectUsersTemplate, [pageNumber * pageSize, pageSize]);
