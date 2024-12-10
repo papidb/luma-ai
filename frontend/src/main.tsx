@@ -7,6 +7,7 @@ import { queryClient } from "./config/tanstack-query";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "sonner";
 import { router } from "./router";
+import "./index.css";
 
 // Render the app
 const rootElement = document.getElementById("root")!;
