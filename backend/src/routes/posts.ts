@@ -6,6 +6,7 @@ import { Post } from "../db/posts/types";
 import { getUserById } from "../db/users/users";
 import { generateId } from "../internals/strings";
 import { validateRequest } from "../middlewares/validate-request";
+import { StatusCodes } from "http-status-codes";
 
 const router = Router();
 
@@ -19,7 +20,9 @@ router.get(
   async (req: Request, res: Response) => {
     const userId = String(req.query.userId);
     const posts = await getPosts(userId);
-    res.send({ data: posts, message: "Posts retrieved successfully" });
+    res
+      .status(StatusCodes.OK)
+      .send({ data: posts, message: "Posts retrieved successfully" });
   }
 );
 
@@ -35,17 +38,17 @@ router.delete(
   }),
   async (req: Request, res: Response) => {
     const id = req.params.id;
-    if (!id) {
-      res.status(400).send({ data: null, message: "id is required" });
-      return;
-    }
     const post = await getPostById(id);
     if (!post) {
-      res.status(404).send({ data: null, message: "Post not found" });
+      res
+        .status(StatusCodes.NOT_FOUND)
+        .send({ data: null, message: "Post not found" });
       return;
     }
     await deletePost(id);
-    res.send({ message: "Post deleted successfully", data: null });
+    res
+      .status(StatusCodes.OK)
+      .send({ message: "Post deleted successfully", data: null });
   }
 );
 
@@ -62,13 +65,17 @@ router.post(
     const post: Post = req.body;
     const user = await getUserById(post.user_id);
     if (!user) {
-      res.status(400).send({ data: null, message: "User not found" });
+      res
+        .status(StatusCodes.NOT_FOUND)
+        .send({ data: null, message: "User not found" });
       return;
     }
     post.id = generateId();
     post.created_at = formatISO(new Date());
     await addPost(post);
-    res.send({ message: "Post added successfully", data: post });
+    res
+      .status(StatusCodes.CREATED)
+      .send({ message: "Post added successfully", data: post });
   }
 );
 

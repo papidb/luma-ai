@@ -1,5 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 
+import { StatusCodes } from "http-status-codes";
+
 import { z, ZodSchema } from "zod";
 
 type Schemas = {
@@ -24,7 +26,7 @@ export const validateRequest = (schemas: Schemas) => {
       next(); // Proceed to the next middleware or route handler
     } catch (err) {
       if (err instanceof z.ZodError) {
-         res.status(400).json({
+         res.status(StatusCodes.BAD_REQUEST).json({
           message: "Validation error",
           details: err.errors.map((e) => ({
             path: e.path?.join(" "),
