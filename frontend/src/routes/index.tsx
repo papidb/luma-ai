@@ -1,3 +1,4 @@
+import { Loading } from "@/components/loading";
 import { usersQueryOptions } from "@/domains/users/hooks";
 import { User } from "@/domains/users/types";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
@@ -47,11 +48,6 @@ const columns = [
 function RouteComponent() {
   const dataData = Route.useLoaderData();
   const navigate = Route.useNavigate();
-
-  // const [pagination, setPagination] = React.useState<PaginationState>({
-  //   pageIndex: 0,
-  //   pageSize: 4,
-  // });
   const pagination = Route.useSearch();
 
   const setPagination = (newState: Updater<PaginationState>) => {
@@ -152,22 +148,37 @@ function RouteComponent() {
             ))}
           </thead>
           <tbody>
-            {table.getRowModel().rows.map((row) => (
-              <tr
-                key={row.id}
-                className="[&:not(:last-child)]:border-b hover:bg-gray-50 cursor-pointer  text-start"
-                onClick={() => handleRowClick(row.original)}
-              >
-                {row.getVisibleCells().map((cell) => (
-                  <td
-                    key={cell.id}
-                    className={`py-[26px] px-[24px] text-[14px] leading-[20px] ${cell.column.id === "name" ? "text-xs-medium" : "text-sm-regular"}`}
-                  >
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
-                ))}
+            {dataQuery?.isPending ? (
+              <tr>
+                <td colSpan={3}>
+                  <div className="flex items-center justify-center py-20">
+                    <div className="flex space-x-2">
+                      <Loading />
+                    </div>
+                  </div>
+                </td>
               </tr>
-            ))}
+            ) : (
+              table.getRowModel().rows.map((row) => (
+                <tr
+                  key={row.id}
+                  className="[&:not(:last-child)]:border-b hover:bg-gray-50 cursor-pointer  text-start"
+                  onClick={() => handleRowClick(row.original)}
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <td
+                      key={cell.id}
+                      className={`py-[26px] px-[24px] text-[14px] leading-[20px] ${cell.column.id === "name" ? "text-xs-medium" : "text-sm-regular"}`}
+                    >
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </td>
+                  ))}
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>
