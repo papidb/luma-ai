@@ -15,6 +15,8 @@ import {
 import { zodValidator } from "@tanstack/zod-adapter";
 import React from "react";
 import { z } from "zod";
+import Right from "../assets/icons/arrow-right.svg?react";
+import Left from "../assets/icons/arrow-left.svg?react";
 
 const searchParams = z.object({
   pageIndex: z.coerce.number().min(0).max(1000).optional().default(0),
@@ -188,7 +190,8 @@ function RouteComponent() {
           disabled={currentPage === 0}
           className="flex items-center px-3 py-1 border rounded-md text-gray-600 disabled:text-gray-300 disabled:cursor-not-allowed"
         >
-          <span className="text-sm">&larr;</span>
+          {/* <span className="text-sm">&larr;</span> */}
+          <Left />
           <span className="ml-1">Previous</span>
         </button>
         <ul className="flex space-x-1">
@@ -216,7 +219,8 @@ function RouteComponent() {
           className="flex items-center px-3 py-1 border rounded-md text-gray-600 disabled:text-gray-300 disabled:cursor-not-allowed"
         >
           <span className="mr-1">Next</span>
-          <span className="text-sm">&rarr;</span>
+          {/* <span className="text-sm">&rarr;</span> */}
+          <Right />
         </button>
       </div>
     </div>
