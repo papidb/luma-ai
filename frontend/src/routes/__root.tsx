@@ -9,7 +9,7 @@ export const Route = createRootRouteWithContext<{
 
 function RootComponent() {
   return (
-    <div className="mt-[130px]">
+    <div className="mt-[130px] font-inter">
       <Outlet />
     </div>
   );

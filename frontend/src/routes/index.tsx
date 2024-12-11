@@ -15,8 +15,8 @@ import {
 import { zodValidator } from "@tanstack/zod-adapter";
 import React from "react";
 import { z } from "zod";
-import Right from "../assets/icons/arrow-right.svg?react";
-import Left from "../assets/icons/arrow-left.svg?react";
+import Right from "@/assets/icons/arrow-right.svg?react";
+import Left from "@/assets/icons/arrow-left.svg?react";
 
 const searchParams = z.object({
   pageIndex: z.coerce.number().min(0).max(1000).optional().default(0),
@@ -170,12 +170,20 @@ function RouteComponent() {
                   {row.getVisibleCells().map((cell) => (
                     <td
                       key={cell.id}
-                      className={`py-[26px] px-[24px] text-[14px] leading-[20px] ${cell.column.id === "name" ? "text-xs-medium" : "text-sm-regular"}`}
+                      className={`
+                          py-[26px] px-[24px] text-[14px] leading-[20px] 
+                          ${cell.column.id === "name" ? "text-xs-medium" : "text-sm-regular"}
+                         
+                        `}
                     >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
+                      <span
+                        className={`${cell.column.id === "full_address" ? "w-[392px] line-clamp-1" : ""}`}
+                      >
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </span>
                     </td>
                   ))}
                 </tr>

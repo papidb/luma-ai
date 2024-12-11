@@ -1,25 +1,23 @@
-import { Post } from "@/domains/posts/types";
-import { X } from "lucide-react";
+import Delete from "@/assets/icons/delete.svg?react";
 
 export function PostCard({
   post,
   onDelete,
 }: {
-  post: Post;
+  post: { id: string; title: string; body: string };
   onDelete: (id: string) => void;
 }) {
   return (
     <div
-      key={post.id}
       id={`post-${post.id}`}
-      className="border rounded-lg p-6 relative hover:shadow-md transition-shadow"
+      className="border rounded-lg border-grey-border p-6 relative shadow-md hover:shadow-md-strong transition-shadow h-[293px]"
     >
-      <X
-        className="w-4 h-4 text-gray-400 absolute top-4 right-4"
+      <Delete
+        className="w-6 h-6 absolute top-1 right-1 cursor-pointer"
         onClick={() => onDelete(post.id)}
       />
-      <h2 className="font-medium text-gray-900 mb-4">{post.title}</h2>
-      <p className="text-gray-600 text-sm line-clamp-4">{post.body}</p>
+      <h2 className="font-inter font-medium text-[18px] leading-[20px] text-grey-text mb-4">{post.title}</h2>
+      <p className="text-grey-text text-sm line-clamp-9">{post.body}</p>
     </div>
   );
 }

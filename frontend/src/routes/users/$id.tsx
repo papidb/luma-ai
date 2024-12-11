@@ -1,3 +1,4 @@
+import Left from "@/assets/icons/arrow-left.svg?react";
 import { Loading } from "@/components/loading";
 import { NewPostCard } from "@/components/new-post-card";
 import { PostCard } from "@/components/post-card";
@@ -9,7 +10,6 @@ import {
 import { NewPostModal } from "@/sections/new-post-modal";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeft } from "lucide-react";
 import { useState } from "react";
 
 import { z } from "zod";
@@ -63,26 +63,30 @@ function RouteComponent() {
   return (
     <div className="max-w-6xl mx-auto p-6 mt-[43px]">
       {/* Back Navigation */}
-      <Link
-        to={"/"}
-        className="inline-flex items-center text-gray-600 mb-8 hover:text-gray-900"
-      >
-        <ArrowLeft className="w-4 h-4 mr-2" />
-        Back to Users
-      </Link>
+      <div className="mb-6">
+        <Link
+          to={"/"}
+          className="inline-flex items-center text-gray-600 gap gap-x-2 hover:text-gray-900 mb-4"
+        >
+          <Left />
+          Back to Users
+        </Link>
 
-      {/* User Profile */}
-      <div className="mb-8">
-        <h1 className="text-2xl font-semibold text-gray-900 mb-1">
+        {/* User Profile */}
+        <h1 className="font-inter font-medium text-[36px] leading-[43px] text-gray-900 mb-4">
           {user.name} {createPostMutation.isPending ? <Loading /> : null}
         </h1>
-        <div className="text-gray-500 text-sm">
-          {user.email} • {posts.length} {posts.length > 1 ? "Posts" : "Post"}
+        <div className="text-gray-500 text-sm-regular mb-4">
+          <span>{user.email}</span>
+          <span className="text-sm-semibold">
+            {" • "}
+            {posts.length} {posts.length > 1 ? "Posts" : "Post"}
+          </span>
         </div>
       </div>
 
       {/* Posts Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid lg:grid-cols-2 xl:grid-cols-3 gap-6">
         {/* New Post Card */}
         <NewPostCard onClick={() => setIsModalOpen(true)} />
 
