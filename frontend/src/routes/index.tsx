@@ -8,13 +8,23 @@ import {
   getCoreRowModel,
   getPaginationRowModel,
   PaginationState,
+  Updater,
   useReactTable,
 } from "@tanstack/react-table";
+import { zodValidator } from "@tanstack/zod-adapter";
 import React from "react";
+import { z } from "zod";
+
+const searchParams = z.object({
+  pageIndex: z.coerce.number().min(0).max(1000).optional().default(0),
+  pageSize: z.coerce.number().min(1).max(1000).optional().default(4),
+});
+
 export const Route = createFileRoute("/")({
   component: RouteComponent,
   loader: async (opts) =>
     opts.context.queryClient.ensureQueryData(usersQueryOptions()),
+  validateSearch: zodValidator(searchParams),
 });
 
 const columnHelper = createColumnHelper<User>();
@@ -38,13 +48,21 @@ function RouteComponent() {
   const dataData = Route.useLoaderData();
   const navigate = Route.useNavigate();
 
-  const [pagination, setPagination] = React.useState<PaginationState>({
-    pageIndex: 0,
-    pageSize: 4,
-  });
+  // const [pagination, setPagination] = React.useState<PaginationState>({
+  //   pageIndex: 0,
+  //   pageSize: 4,
+  // });
+  const pagination = Route.useSearch();
+
+  const setPagination = (newState: Updater<PaginationState>) => {
+    navigate({
+      to: "/",
+      search: newState,
+    });
+  };
 
   const dataQuery = useQuery({
-    ...usersQueryOptions(pagination.pageIndex),
+    ...usersQueryOptions(pagination.pageIndex, pagination.pageSize),
     placeholderData: keepPreviousData, // don't have 0 rows flash while changing pages/loading next page
   });
 
@@ -71,22 +89,24 @@ function RouteComponent() {
   const totalPages = table.getPageCount();
   const currentPage = table.getState().pagination.pageIndex;
   const pageNumbers: (number | string)[] = React.useMemo(() => {
-    const container: (number | string)[] = [];
+    const page = currentPage + 1;
+    const delta = 2; // Number of neighbors around the current page
+    const pages = [];
+
     for (let i = 1; i <= totalPages; i++) {
       if (
-        i === 1 ||
-        i === totalPages ||
-        (i >= currentPage - 1 && i <= currentPage + 1)
+        i === 1 || // Always show the first page
+        i === totalPages || // Always show the last page
+        i === page ||
+        (i >= page - delta && i <= page + delta) // Pages around the current page
       ) {
-        container.push(i);
-      } else if (
-        (i === currentPage - 2 || i === currentPage + 2) &&
-        !container.includes("...")
-      ) {
-        container.push("...");
+        pages.push(i);
+      } else if (pages[pages.length - 1] !== "...") {
+        pages.push("...");
       }
     }
-    return container;
+
+    return pages;
   }, [currentPage, totalPages]);
 
   const onPageChange = (page: number) => {

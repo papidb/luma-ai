@@ -2,10 +2,10 @@ import { infiniteQueryOptions, queryOptions } from "@tanstack/react-query";
 import { getUsers } from "./api";
 import { USER_QUERY_KEYS } from "./constants";
 
-export function usersQueryOptions(page = 0) {
+export function usersQueryOptions(page = 0, pageSize = 4) {
   return queryOptions({
-    queryKey: USER_QUERY_KEYS.users(page),
-    queryFn: () => getUsers(page),
+    queryKey: USER_QUERY_KEYS.users(page, pageSize),
+    queryFn: () => getUsers(page, pageSize),
   });
 }
 

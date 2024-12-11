@@ -81,6 +81,9 @@ importers:
       '@tanstack/react-table':
         specifier: ^8.20.5
         version: 8.20.5(react-dom@18.3.1)(react@18.3.1)
+      '@tanstack/zod-adapter':
+        specifier: ^1.87.7
+        version: 1.87.7(@tanstack/react-router@1.87.3)(zod@3.23.8)
       lucide-react:
         specifier: ^0.468.0
         version: 0.468.0(react@18.3.1)
@@ -1280,6 +1283,17 @@ packages:
     resolution: {integrity: sha512-jV5mWJrsh3QXHpb/by6udSqwva0qK50uYHpIXvKsLaxnlbjbLfflfPjFyRWXbMtZsnzCjSUqp5pm5/p+Wpaerg==}
     engines: {node: '>=12'}
     dev: true
+
+  /@tanstack/zod-adapter@1.87.7(@tanstack/react-router@1.87.3)(zod@3.23.8):
+    resolution: {integrity: sha512-UbgE+DUFqc0NDD3AWr1jOpIZtpuNJnPSp0uaQvZclqKH2nRyvBVptZWBEZLaGDGZz0Gdr+5Gl/lucC6lCSLaKg==}
+    engines: {node: '>=12'}
+    peerDependencies:
+      '@tanstack/react-router': '>=1.43.2'
+      zod: ^3.23.8
+    dependencies:
+      '@tanstack/react-router': 1.87.3(react-dom@18.3.1)(react@18.3.1)
+      zod: 3.23.8
+    dev: false
 
   /@tootallnate/once@1.1.2:
     resolution: {integrity: sha512-RbzJvlNzmRq5c3O09UipeuXno4tA1FE6ikOjxZK0tuxVv3412l64l5t1W5pj4+rJq9vpkm/kwiR07aZXnsKPxw==}
