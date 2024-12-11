@@ -1,3 +1,4 @@
+import { Loading } from "@/components/loading";
 import { NewPostCard } from "@/components/new-post-card";
 import { PostCard } from "@/components/post-card";
 import {
@@ -8,7 +9,7 @@ import {
 import { NewPostModal } from "@/sections/new-post-modal";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeft, Loader2 } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { useState } from "react";
 
 import { z } from "zod";
@@ -73,10 +74,7 @@ function RouteComponent() {
       {/* User Profile */}
       <div className="mb-8">
         <h1 className="text-2xl font-semibold text-gray-900 mb-1">
-          {user.name}{" "}
-          {createPostMutation.isPending ? (
-            <Loader2 size={40} className="mr-2 animate-spin" />
-          ) : null}
+          {user.name} {createPostMutation.isPending ? <Loading /> : null}
         </h1>
         <div className="text-gray-500 text-sm">
           {user.email} • {posts.length} {posts.length > 1 ? "Posts" : "Post"}

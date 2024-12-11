@@ -1,14 +1,16 @@
 import { usersQueryOptions } from "@/domains/users/hooks";
 import { User } from "@/domains/users/types";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import {
   createColumnHelper,
   flexRender,
   getCoreRowModel,
   getPaginationRowModel,
+  PaginationState,
   useReactTable,
 } from "@tanstack/react-table";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import React from "react";
 export const Route = createFileRoute("/")({
   component: RouteComponent,
   loader: async (opts) =>
@@ -36,8 +38,20 @@ function RouteComponent() {
   const dataData = Route.useLoaderData();
   const navigate = Route.useNavigate();
 
+  const [pagination, setPagination] = React.useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 4,
+  });
+
+  const dataQuery = useQuery({
+    ...usersQueryOptions(pagination.pageIndex),
+    placeholderData: keepPreviousData, // don't have 0 rows flash while changing pages/loading next page
+  });
+
+  const defaultData = React.useMemo(() => dataData.data ?? [], [dataData]);
+
   const table = useReactTable({
-    data: dataData.data,
+    data: dataQuery.data?.data ?? defaultData,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -46,7 +60,41 @@ function RouteComponent() {
         pageSize: 4,
       },
     },
+    pageCount: dataQuery.data?.page_count ?? 1,
+    state: {
+      pagination,
+    },
+    onPaginationChange: setPagination,
+    manualPagination: true,
   });
+
+  const totalPages = table.getPageCount();
+  const currentPage = table.getState().pagination.pageIndex;
+  const pageNumbers: (number | string)[] = React.useMemo(() => {
+    const container: (number | string)[] = [];
+    for (let i = 1; i <= totalPages; i++) {
+      if (
+        i === 1 ||
+        i === totalPages ||
+        (i >= currentPage - 1 && i <= currentPage + 1)
+      ) {
+        container.push(i);
+      } else if (
+        (i === currentPage - 2 || i === currentPage + 2) &&
+        !container.includes("...")
+      ) {
+        container.push("...");
+      }
+    }
+    return container;
+  }, [currentPage, totalPages]);
+
+  const onPageChange = (page: number) => {
+    if (Number.isNaN(page)) {
+      return;
+    }
+    table.setPageIndex(page);
+  };
 
   const handleRowClick = (user: User) => {
     navigate({
@@ -103,39 +151,41 @@ function RouteComponent() {
           </tbody>
         </table>
       </div>
-      <div className="flex items-center justify-between px-2 mt-4">
+      <div className="flex items-center space-x-2 justify-end">
         <button
-          className="px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
+          onClick={() => onPageChange(currentPage - 1)}
+          disabled={currentPage === 0}
+          className="flex items-center px-3 py-1 border rounded-md text-gray-600 disabled:text-gray-300 disabled:cursor-not-allowed"
         >
-          <ChevronLeft className="h-4 w-4 mr-2 inline" />
-          Previous
+          <span className="text-sm">&larr;</span>
+          <span className="ml-1">Previous</span>
         </button>
-        <div className="flex items-center gap-2">
-          {Array.from({ length: table.getPageCount() }, (_, i) => i + 1).map(
-            (page) => (
-              <button
-                key={page}
-                className={`px-3 py-2 text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${
-                  table.getState().pagination.pageIndex + 1 === page
-                    ? "bg-gray-200 text-gray-700"
-                    : "bg-white text-gray-700 hover:bg-gray-50"
-                }`}
-                onClick={() => table.setPageIndex(page - 1)}
-              >
-                {page}
-              </button>
-            )
-          )}
-        </div>
+        <ul className="flex space-x-1">
+          {pageNumbers.map((number, index) => (
+            <li
+              onClick={() => onPageChange(Number(number) - 1)}
+              key={index}
+              className={`flex w-[40px] h-[40px] rounded-lg align-middle items-center justify-center ${
+                number === currentPage + 1
+                  ? "bg-purple-100 text-purple-600 font-medium"
+                  : "text-gray-600 hover:bg-gray-100"
+              }`}
+            >
+              {number === "..." ? (
+                <span className="text-grey-text">...</span>
+              ) : (
+                <button>{number}</button>
+              )}
+            </li>
+          ))}
+        </ul>
         <button
-          className="px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
+          onClick={() => onPageChange(currentPage + 1)}
+          disabled={currentPage === totalPages - 1}
+          className="flex items-center px-3 py-1 border rounded-md text-gray-600 disabled:text-gray-300 disabled:cursor-not-allowed"
         >
-          Next
-          <ChevronRight className="h-4 w-4 ml-2 inline" />
+          <span className="mr-1">Next</span>
+          <span className="text-sm">&rarr;</span>
         </button>
       </div>
     </div>
