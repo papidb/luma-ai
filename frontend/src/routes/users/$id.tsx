@@ -77,9 +77,7 @@ function RouteComponent() {
       {/* Posts Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* New Post Card */}
-        <div className="" onClick={() => setIsModalOpen(true)}>
-          <NewPostCard />
-        </div>
+        <NewPostCard onClick={() => setIsModalOpen(true)} />
 
         {/* Post Cards */}
         {posts.map((post) => (
