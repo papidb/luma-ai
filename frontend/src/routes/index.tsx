@@ -126,7 +126,7 @@ function RouteComponent() {
   };
 
   return (
-    <div className="w-full max-w-6xl mx-auto p-6 grid gap-y-6">
+    <div className="w-full max-w-4xl lg:max-w-2xl mx-auto grid gap-y-6 px-2">
       <h1 className="display-xl-medium">Users</h1>
       <div className="rounded-lg border border-grey">
         <table className="w-full text-grey-text">
@@ -184,25 +184,24 @@ function RouteComponent() {
           </tbody>
         </table>
       </div>
-      <div className="flex items-center space-x-2 justify-end">
+      <div className="flex items-center space-x-2 justify-end gap gap-x-[42px]">
         <button
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 0}
-          className="flex items-center px-3 py-1 border rounded-md text-gray-600 disabled:text-gray-300 disabled:cursor-not-allowed"
+          className="flex items-center py-2.5 gap gap-x-2"
         >
-          {/* <span className="text-sm">&larr;</span> */}
           <Left />
-          <span className="ml-1">Previous</span>
+          <span className="mr-1 text-sm-semibold text-grey-text">Previous</span>
         </button>
         <ul className="flex space-x-1">
           {pageNumbers.map((number, index) => (
             <li
               onClick={() => onPageChange(Number(number) - 1)}
               key={index}
-              className={`flex w-[40px] h-[40px] rounded-lg align-middle items-center justify-center ${
+              className={`flex w-[40px] h-[40px] rounded-lg align-middle items-center justify-center text-sm-semibold text-grey-text ${
                 number === currentPage + 1
                   ? "bg-purple-100 text-purple-600 font-medium"
-                  : "text-gray-600 hover:bg-gray-100"
+                  : ""
               }`}
             >
               {number === "..." ? (
@@ -216,10 +215,9 @@ function RouteComponent() {
         <button
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage === totalPages - 1}
-          className="flex items-center px-3 py-1 border rounded-md text-gray-600 disabled:text-gray-300 disabled:cursor-not-allowed"
+          className="flex items-center py-2.5 gap gap-x-2"
         >
-          <span className="mr-1">Next</span>
-          {/* <span className="text-sm">&rarr;</span> */}
+          <span className="mr-1 text-sm-semibold text-grey-text">Next</span>
           <Right />
         </button>
       </div>

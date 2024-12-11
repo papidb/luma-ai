@@ -19,4 +19,7 @@
   .text-sm-regular {
     @apply font-inter font-normal text-[14px] leading-[20px];
   }
+  .text-sm-semibold {
+    @apply font-inter font-semibold text-[14px] leading-[20px];
+  }
 }
