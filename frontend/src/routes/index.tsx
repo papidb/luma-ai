@@ -60,17 +60,17 @@ function RouteComponent() {
   };
 
   return (
-    <div className="w-full max-w-6xl mx-auto p-6">
-      <h1 className="text-4xl font-medium mb-8">Users</h1>
-      <div className="rounded-lg border border-gray-200">
-        <table className="w-full">
+    <div className="w-full max-w-6xl mx-auto p-6 grid gap-y-6">
+      <h1 className="display-xl-medium">Users</h1>
+      <div className="rounded-lg border border-grey">
+        <table className="w-full text-grey-text">
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id}>
+              <tr key={headerGroup.id} className="[&>th]:border-b-0">
                 {headerGroup.headers.map((header) => (
                   <th
                     key={header.id}
-                    className="h-12 px-4 text-left align-middle font-medium text-gray-500"
+                    className="text-xs-medium  py-[13px] px-[24px] text-start"
                   >
                     {header.isPlaceholder
                       ? null
@@ -87,11 +87,14 @@ function RouteComponent() {
             {table.getRowModel().rows.map((row) => (
               <tr
                 key={row.id}
-                className="border-t hover:bg-gray-50 cursor-pointer"
+                className="[&:not(:last-child)]:border-b hover:bg-gray-50 cursor-pointer  text-start"
                 onClick={() => handleRowClick(row.original)}
               >
                 {row.getVisibleCells().map((cell) => (
-                  <td key={cell.id} className="p-4">
+                  <td
+                    key={cell.id}
+                    className={`py-[26px] px-[24px] text-[14px] leading-[20px] ${cell.column.id === "name" ? "text-xs-medium" : "text-sm-regular"}`}
+                  >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </td>
                 ))}

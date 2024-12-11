@@ -1,3 +1,22 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+  .font-inter {
+    font-family: "Inter", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: normal;
+    font-style: normal;
+  }
+  .display-xl-medium {
+    @apply font-inter font-medium text-[60px] leading-[72px] tracking-[-0.02em];
+  }
+
+  .text-xs-medium {
+    @apply font-inter font-medium text-[12px] leading-[18px];
+  }
+  .text-sm-regular {
+    @apply font-inter font-normal text-[14px] leading-[20px];
+  }
+}
