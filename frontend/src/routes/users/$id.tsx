@@ -1,7 +1,11 @@
-import { postsQueryOptions } from "@/domains/posts/hooks";
+import { NewPostCard } from "@/components/new-post-card";
+import { PostCard } from "@/components/post-card";
+import { postsQueryOptions, useCreatePost } from "@/domains/posts/hooks";
+import { NewPostModal } from "@/sections/new-post-modal";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeft, Plus, X } from "lucide-react";
+import { ArrowLeft, Loader2 } from "lucide-react";
+import { useState } from "react";
 
 import { z } from "zod";
 
@@ -26,6 +30,26 @@ function RouteComponent() {
   const posts = postsQuery.data;
   const user = Route.useSearch();
 
+  const createPostMutation = useCreatePost();
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handlePublish = (title: string, content: string) => {
+    createPostMutation.mutate(
+      { title, body: content, user_id: params.id },
+      {
+        onSuccess: (data) => {
+          requestAnimationFrame(() => {
+            const postCard = document.getElementById(`post-${data.data.id}`);
+            if (postCard) {
+              postCard.scrollIntoView({ behavior: "smooth" });
+            }
+          });
+        },
+      }
+    );
+  };
+
   return (
     <div className="max-w-6xl mx-auto p-6">
       {/* Back Navigation */}
@@ -40,7 +64,10 @@ function RouteComponent() {
       {/* User Profile */}
       <div className="mb-8">
         <h1 className="text-2xl font-semibold text-gray-900 mb-1">
-          {user.name}
+          {user.name}{" "}
+          {createPostMutation.isPending ? (
+            <Loader2 size={40} className="mr-2 animate-spin" />
+          ) : null}
         </h1>
         <div className="text-gray-500 text-sm">
           {user.email} • {posts.length} {posts.length > 1 ? "Posts" : "Post"}
@@ -50,25 +77,20 @@ function RouteComponent() {
       {/* Posts Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* New Post Card */}
-        <div className="border border-dashed rounded-lg p-6 flex items-center justify-center cursor-pointer hover:bg-gray-50 transition-colors">
-          <div className="flex flex-col items-center text-gray-400">
-            <Plus className="w-6 h-6 mb-2" />
-            <span>New Post</span>
-          </div>
+        <div className="" onClick={() => setIsModalOpen(true)}>
+          <NewPostCard />
         </div>
 
         {/* Post Cards */}
         {posts.map((post) => (
-          <div
-            key={post.id}
-            className="border rounded-lg p-6 relative hover:shadow-md transition-shadow"
-          >
-            <X className="w-4 h-4 text-gray-400 absolute top-4 right-4" />
-            <h2 className="font-medium text-gray-900 mb-4">{post.title}</h2>
-            <p className="text-gray-600 text-sm line-clamp-4">{post.body}</p>
-          </div>
+          <PostCard post={post} key={post.id} />
         ))}
       </div>
+      <NewPostModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onPublish={handlePublish}
+      />
     </div>
   );
 }
