@@ -1,6 +1,10 @@
 import { NewPostCard } from "@/components/new-post-card";
 import { PostCard } from "@/components/post-card";
-import { postsQueryOptions, useCreatePost } from "@/domains/posts/hooks";
+import {
+  postsQueryOptions,
+  useCreatePost,
+  useDeletePost,
+} from "@/domains/posts/hooks";
 import { NewPostModal } from "@/sections/new-post-modal";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
@@ -31,6 +35,7 @@ function RouteComponent() {
   const user = Route.useSearch();
 
   const createPostMutation = useCreatePost();
+  const deletePostMutation = useDeletePost(params.id);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -48,6 +53,10 @@ function RouteComponent() {
         },
       }
     );
+  };
+
+  const handleDelete = (id: string) => {
+    deletePostMutation.mutate(id);
   };
 
   return (
@@ -81,7 +90,7 @@ function RouteComponent() {
 
         {/* Post Cards */}
         {posts.map((post) => (
-          <PostCard post={post} key={post.id} />
+          <PostCard post={post} key={post.id} onDelete={handleDelete} />
         ))}
       </div>
       <NewPostModal

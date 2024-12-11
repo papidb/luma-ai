@@ -1,5 +1,8 @@
-import { queryClient } from "@/config/tanstack-query";
-import { queryOptions, useMutation } from "@tanstack/react-query";
+import {
+  queryOptions,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { toast } from "sonner";
 import { createPost, deletePost, getPosts } from "./api";
 import { POSTS_QUERY_KEYS } from "./constants";
@@ -12,19 +15,23 @@ export function postsQueryOptions(userId: string) {
 }
 
 export function useCreatePost() {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: createPost,
     onSuccess: (_, variables) => {
       toast.success("Post created successfully");
-      return queryClient.invalidateQueries({
-        queryKey: POSTS_QUERY_KEYS.posts(variables.user_id),
-      });
+      return queryClient.refetchQueries(postsQueryOptions(variables.user_id));
     },
   });
 }
 
-export function useDeletePost(id: string) {
+export function useDeletePost(userId: string) {
+  const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: () => deletePost(id),
+    mutationFn: deletePost,
+    onSuccess: () => {
+      toast.success("Post deleted successfully");
+      return queryClient.refetchQueries(postsQueryOptions(userId));
+    },
   });
 }
